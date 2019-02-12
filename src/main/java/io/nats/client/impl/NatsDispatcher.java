@@ -13,12 +13,12 @@
 
 package io.nats.client.impl;
 
-import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.nats.client.Dispatcher;
+import io.nats.client.Duration;
 import io.nats.client.MessageHandler;
 
 class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
@@ -32,8 +32,9 @@ class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
     private String id;
 
     private Map<String, NatsSubscription> subscriptions;
-    private Duration waitForMessage;
 
+
+    private Duration waitForMessage;
 
     NatsDispatcher(NatsConnection conn, MessageHandler handler) {
         super(conn);
@@ -118,9 +119,9 @@ class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
         }
 
         if (unsubscribeAll) {
-            this.subscriptions.forEach((subj, sub) -> {
+            for(NatsSubscription sub : subscriptions.values()) {
                 this.connection.unsubscribe(sub, -1);
-            });
+            };
         } else {
             this.subscriptions.clear();
         }
@@ -139,9 +140,9 @@ class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
     }
 
     void resendSubscriptions() {
-        this.subscriptions.forEach((id, sub)->{
+        for(NatsSubscription sub : subscriptions.values()) {
             this.connection.sendSubscriptionMessage(sub.getSID(), sub.getSubject(), sub.getQueueName(), true);
-        });
+        };
     }
 
     // Called by the connection when the subscription is removed
@@ -183,10 +184,11 @@ class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
 
         if (sub == null) {
             sub = connection.createSubscription(subject, queueName, this);
-            NatsSubscription actual = subscriptions.putIfAbsent(subject, sub);
-            if (actual != null) {
-                this.connection.unsubscribe(sub, -1); // Could happen on very bad timing
-            }
+            NatsSubscription actual = subscriptions.get(subject);
+            subscriptions.put(subject, sub);
+//            if (actual != null) {
+//                this.connection.unsubscribe(sub, -1); // Could happen on very bad timing
+//            }
         }
 
         return this;
@@ -219,9 +221,9 @@ class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
     }
 
     void sendUnsubForDrain() {
-        this.subscriptions.forEach((id, sub)->{
+        for(NatsSubscription sub : subscriptions.values()) {
             this.connection.sendUnsub(sub, -1);
-        });
+        };
     }
 
     void cleanUpAfterDrain() {
