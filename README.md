@@ -1,18 +1,23 @@
 ![NATS](src/main/javadoc/images/large-logo.png)
 
-# NATS - Java Client
+# NATS - Android Client
 
-A [Java](http://java.com) client for the [NATS messaging system](https://nats.io).
+A [Android](http://www.android.com) client for the [NATS messaging system](https://nats.io).
 
 [![License Apache 2](https://img.shields.io/badge/License-Apache2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Build Status](https://travis-ci.org/nats-io/java-nats.svg?branch=master)](http://travis-ci.org/nats-io/java-nats?branch=master)
-[![Coverage Status](https://coveralls.io/repos/nats-io/java-nats/badge.svg?branch=master&service=github)](https://coveralls.io/github/nats-io/java-nats?branch=master)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.nats/jnats/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.nats/jnats)
-[![Javadoc](http://javadoc.io/badge/io.nats/jnats.svg?branch=master)](http://javadoc.io/doc/io.nats/jnats?branch=master)
+
+This is version 2.1 of the Android port to the [java-nats](https://github.com/nats-io/java-nats) library. 
+
+It has no external dependencies.  I replaced some JDK classes not available in Android pre API 24 with implementations based
+on available JDK classes. 
+
+## Kotlin Coroutines
+
+Kotlin and coroutine support will be added shortly
 
 ## A Note on Versions
 
-This is version 2.1 of the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
+This is version 2.1 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
 
 The API is [simple to use](#listening-for-incoming-messages) and highly [performant](#Benchmarking).
 
@@ -32,76 +37,15 @@ to improve security. Since NKeys are new, and not available in the server we hav
 
 ## Installation
 
-The java-nats client is provided in a single jar file, with a single external dependency for the encryption in NKey support. See [Building From Source](#building-from-source) for details on building the library.
-
-### Downloading the Jar
-
-You can download the latest jar at [https://search.maven.org/remotecontent?filepath=io/nats/jnats/2.3.0/jnats-2.3.0.jar](https://search.maven.org/remotecontent?filepath=io/nats/jnats/2.3.0/jnats-2.3.0.jar).
-
-The examples are available at [https://search.maven.org/remotecontent?filepath=io/nats/jnats/2.3.0/jnats-2.3.0-examples.jar](https://search.maven.org/remotecontent?filepath=io/nats/jnats/2.3.0/jnats-2.3.0-examples.jar).
-
-To use NKeys, you will need the ed25519 library, which can be downloaded at [https://repo1.maven.org/maven2/net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar](https://repo1.maven.org/maven2/net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar).
+The nats-android client is provided in a single jar file, with a single external dependency for the encryption in NKey support. See [Building From Source](#building-from-source) for details on building the library.
 
 ### Using Gradle
 
-The NATS client is available in the Maven central repository, and can be imported as a standard dependency in your `build.gradle` file:
-
-```groovy
-dependencies {
-    implementation 'io.nats:jnats:2.2.0'
-}
-```
-
-If you need the latest and greatest before Maven central updates, you can use:
-
-```groovy
-repositories {
-    jcenter()
-    maven {
-        url "https://oss.sonatype.org/content/repositories/releases"
-    }
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-}
-```
-
-### Using Maven
-
-The NATS client is available on the Maven central repository, and can be imported as a normal dependency in your pom.xml file:
-
-```xml
-<dependency>
-    <groupId>io.nats</groupId>
-    <artifactId>jnats</artifactId>
-    <version>2.2.0</version>
-</dependency>
-```
-
-If you need the absolute latest, before it propagates to maven central, you can use the repository:
-
-```xml
-<repositories>
-    <repository>
-        <id>latest-repo</id>
-        <url>https://oss.sonatype.org/content/repositories/releases</url>
-        <releases><enabled>true</enabled></releases>
-        <snapshots><enabled>false</enabled></snapshots>
-    </repository>
-</repositories>
-```
-
-If you are using the 1.x version of java-nats and don't want to upgrade to 2.0.0 please use ranges in your POM file, java-nats-streaming 1.x is using [1.1, 1.9.9) for this.
-
-### Linux Platform Note
-
-NATS uses RNG to generate unique inbox names. A peculiarity of the JDK on Linux (see [JDK-6202721](https://bugs.openjdk.java.net/browse/JDK-6202721) and [JDK-6521844](https://bugs.openjdk.java.net/browse/JDK-6521844)) causes Java to use `/dev/random` even when `/dev/urandom` is called for. The net effect is that successive calls to `newInbox()`, either directly or through calling `request()` will become very slow, on the order of seconds, making many applications unusable if the issue is not addressed. A simple workaround would be to use the following jvm args.
-
-`-Djava.security.egd=file:/dev/./urandom`
+This Android port is new and not yet published to public repos.  Will do!
 
 ## Basic Usage
 
-Sending and receiving with NATS is as simple as connecting to the gnatsd and publishing or subscribing for messages. A number of examples are provided in this repo as described in [examples.md](src/examples/java/io/nats/examples/examples.md).
+Sending and receiving with NATS is as simple as connecting to the gnatsd and publishing or subscribing for messages. There is an example Android app provided in this repo as described in [examples.md](example/README.md).
 
 ### Connecting
 
@@ -195,40 +139,23 @@ The Java NATS library provides two mechanisms to listen for messages, three if y
 
 NATS supports TLS 1.2. The server can be configured to verify client certificates or not. Depending on this setting the client has several options.
 
-1. The Java library allows the use of the tls:// protocol in its urls. This setting expects a default SSLContext to be set. You can set this default context using System properties, or in code. For example, you could run the publish example using:
+You can include a truststore in your application assets as opposed to system truststore.  To initiate an SSL context for your NATS Connection
 
-    ```bash
-    java -Djavax.net.ssl.keyStore=src/test/resources/keystore.jks -Djavax.net.ssl.keyStorePassword=password -Djavax.net.ssl.trustStore=src/test/resources/cacerts -Djavax.net.ssl.trustStorePassword=password io.nats.examples.NatsPub tls://localhost:4443 test "hello world"
-    ```
+```java
+        val truststore = KeyStore.getInstance("BKS")
+        assetManager.open(KEYSTORE_FILE).use {
+            truststore.load(it, KEYSTORE_PASSWORD.toCharArray())
+        }
+        val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+        tmf.init(truststore)
+        val sc = SSLContext.getInstance("TLS")
+        sc.init(null, tmf.trustManagers, java.security.SecureRandom())
 
-    where the following properties are being set:
-
-    ```bash
-    -Djavax.net.ssl.keyStore=src/test/resources/keystore.jks
-    -Djavax.net.ssl.keyStorePassword=password
-    -Djavax.net.ssl.trustStore=src/test/resources/cacerts
-    -Djavax.net.ssl.trustStorePassword=password
-    ```
-
-    This method can be used with or without client verification.
-
-2. During development, or behind a firewall where the client can trust the server, the library supports the opentls:// protocol which will use a special SSLContext that trusts all server certificates, but provides no client certificates.
-
-    ```bash
-    java io.nats.examples.NatsSub opentls://localhost:4443 test 3
-    ```
-
-    This method requires that client verification is off.
-
-3. Your code can build an SSLContext to work with or without client verification.
-
-    ```java
-    SSLContext ctx = createContext();
-    Options options = new Options.Builder().server(ts.getURI()).sslContext(ctx).build();
-    Connection nc = Nats.connect(options);
-    ```
-
-If you want to try out these techniques, take a look at the [examples.md](src/examples/java/io/nats/examples/examples.md) for instructions.
+        return Options.Builder()
+                .server(NATS_SERVER)
+                .userInfo(NATS_USER, NATS_PASSWORD)
+                .sslContext(sc)
+```
 
 ### Clusters & Reconnecting
 
@@ -243,107 +170,13 @@ Options o = new Options.Builder().servers(serverUrls).build();
 
 Reconnection behavior is controlled via a few options, see the javadoc for the Options.Builder class for specifics on reconnect limits, delays and buffers.
 
-## Benchmarking
-
-The `io.nats.examples` package contains two benchmarking tools, modeled after tools in other NATS clients. Both examples run against an existing gnatsd. The first called `io.nats.examples.benchmark.NatsBench` runs two simple tests, the first simply publishes messages, the second also receives messages. Tests are run with 1 thread/connection per publisher or subscriber. Running on an iMac (2017), with 4.2 GHz Intel Core i7 and 64GB of memory produced results like:
-
-```AsciiDoc
-Starting benchmark(s) [msgs=5000000, msgsize=256, pubs=2, subs=2]
-Current memory usage is 966.14 mb / 981.50 mb / 14.22 gb free/total/max
-Use ctrl-C to cancel.
-Pub Only stats: 9,584,263 msgs/sec ~ 2.29 gb/sec
- [ 1] 4,831,495 msgs/sec ~ 1.15 gb/sec (2500000 msgs)
- [ 2] 4,792,145 msgs/sec ~ 1.14 gb/sec (2500000 msgs)
-  min 4,792,145 | avg 4,811,820 | max 4,831,495 | stddev 19,675.00 msgs
-Pub/Sub stats: 3,735,744 msgs/sec ~ 912.05 mb/sec
- Pub stats: 1,245,680 msgs/sec ~ 304.12 mb/sec
-  [ 1] 624,385 msgs/sec ~ 152.44 mb/sec (2500000 msgs)
-  [ 2] 622,840 msgs/sec ~ 152.06 mb/sec (2500000 msgs)
-   min 622,840 | avg 623,612 | max 624,385 | stddev 772.50 msgs
- Sub stats: 2,490,461 msgs/sec ~ 608.02 mb/sec
-  [ 1] 1,245,230 msgs/sec ~ 304.01 mb/sec (5000000 msgs)
-  [ 2] 1,245,231 msgs/sec ~ 304.01 mb/sec (5000000 msgs)
-   min 1,245,230 | avg 1,245,230 | max 1,245,231 | stddev .71 msgs
-Final memory usage is 2.02 gb / 2.94 gb / 14.22 gb free/total/max
-```
-
-The second, called `io.nats.examples.autobench.NatsAutoBench` runs a series of tests with various message sizes. Running this test on the same iMac, resulted in:
-
-```AsciiDoc
-PubOnly 0b           10,000,000          8,464,850 msg/s       0.00 b/s
-PubOnly 8b           10,000,000         10,065,263 msg/s     76.79 mb/s
-PubOnly 32b          10,000,000         12,534,612 msg/s    382.53 mb/s
-PubOnly 256b         10,000,000          7,996,057 msg/s      1.91 gb/s
-PubOnly 512b         10,000,000          5,942,165 msg/s      2.83 gb/s
-PubOnly 1k            1,000,000          4,043,937 msg/s      3.86 gb/s
-PubOnly 4k              500,000          1,114,947 msg/s      4.25 gb/s
-PubOnly 8k              100,000            460,630 msg/s      3.51 gb/s
-PubSub 0b            10,000,000          3,155,673 msg/s       0.00 b/s
-PubSub 8b            10,000,000          3,218,427 msg/s     24.55 mb/s
-PubSub 32b           10,000,000          2,681,550 msg/s     81.83 mb/s
-PubSub 256b          10,000,000          2,020,481 msg/s    493.28 mb/s
-PubSub 512b           5,000,000          2,000,918 msg/s    977.01 mb/s
-PubSub 1k             1,000,000          1,170,448 msg/s      1.12 gb/s
-PubSub 4k               100,000            382,964 msg/s      1.46 gb/s
-PubSub 8k               100,000            196,474 msg/s      1.50 gb/s
-PubDispatch 0b       10,000,000          4,645,438 msg/s       0.00 b/s
-PubDispatch 8b       10,000,000          4,500,006 msg/s     34.33 mb/s
-PubDispatch 32b      10,000,000          4,458,481 msg/s    136.06 mb/s
-PubDispatch 256b     10,000,000          2,586,563 msg/s    631.49 mb/s
-PubDispatch 512b      5,000,000          2,187,592 msg/s      1.04 gb/s
-PubDispatch 1k        1,000,000          1,369,985 msg/s      1.31 gb/s
-PubDispatch 4k          100,000            403,314 msg/s      1.54 gb/s
-PubDispatch 8k          100,000            203,320 msg/s      1.55 gb/s
-ReqReply 0b              20,000              9,548 msg/s       0.00 b/s
-ReqReply 8b              20,000              9,491 msg/s     74.15 kb/s
-ReqReply 32b             10,000              9,778 msg/s    305.59 kb/s
-ReqReply 256b            10,000              8,394 msg/s      2.05 mb/s
-ReqReply 512b            10,000              8,259 msg/s      4.03 mb/s
-ReqReply 1k              10,000              8,193 msg/s      8.00 mb/s
-ReqReply 4k              10,000              7,915 msg/s     30.92 mb/s
-ReqReply 8k              10,000              7,454 msg/s     58.24 mb/s
-Latency 0b    5,000     35 /  49.20 / 134    +/- 0.77  (microseconds)
-Latency 8b    5,000     35 /  49.54 / 361    +/- 0.80  (microseconds)
-Latency 32b   5,000     35 /  49.27 / 135    +/- 0.79  (microseconds)
-Latency 256b  5,000     41 /  56.41 / 142    +/- 0.90  (microseconds)
-Latency 512b  5,000     40 /  56.41 / 174    +/- 0.91  (microseconds)
-Latency 1k    5,000     35 /  49.76 / 160    +/- 0.80  (microseconds)
-Latency 4k    5,000     36 /  50.64 / 193    +/- 0.83  (microseconds)
-Latency 8k    5,000     38 /  55.45 / 206    +/- 0.88  (microseconds)
-```
-
-It is worth noting that in both cases memory was not a factor, the processor and OS were more of a consideration. To test this, take a look at the NatsBench results again. Those are run without any constraint on the Java heap and end up doubling the used memory. However, if we run the same test again with a constraint of 1Gb using -Xmx1g, the performance is comparable, differentiated primarily by "noise" that we can see between test runs with the same settings.
-
-```AsciiDoc
-Starting benchmark(s) [msgs=5000000, msgsize=256, pubs=2, subs=2]
-Current memory usage is 976.38 mb / 981.50 mb / 981.50 mb free/total/max
-Use ctrl-C to cancel.
-
-Pub Only stats: 10,123,382 msgs/sec ~ 2.41 gb/sec
- [ 1] 5,068,256 msgs/sec ~ 1.21 gb/sec (2500000 msgs)
- [ 2] 5,061,691 msgs/sec ~ 1.21 gb/sec (2500000 msgs)
-  min 5,061,691 | avg 5,064,973 | max 5,068,256 | stddev 3,282.50 msgs
-
-Pub/Sub stats: 3,563,770 msgs/sec ~ 870.06 mb/sec
- Pub stats: 1,188,261 msgs/sec ~ 290.10 mb/sec
-  [ 1] 594,701 msgs/sec ~ 145.19 mb/sec (2500000 msgs)
-  [ 2] 594,130 msgs/sec ~ 145.05 mb/sec (2500000 msgs)
-   min 594,130 | avg 594,415 | max 594,701 | stddev 285.50 msgs
- Sub stats: 2,375,839 msgs/sec ~ 580.04 mb/sec
-  [ 1] 1,187,919 msgs/sec ~ 290.02 mb/sec (5000000 msgs)
-  [ 2] 1,187,920 msgs/sec ~ 290.02 mb/sec (5000000 msgs)
-   min 1,187,919 | avg 1,187,919 | max 1,187,920 | stddev .71 msgs
-
-
-Final memory usage is 317.62 mb / 960.50 mb / 960.50 mb free/total/max
-```
 
 ## Building From Source
 
 The build depends on Gradle, and contains `gradlew` to simplify the process. After cloning, you can build the repository and run the tests with a single command:
 
 ```bash
-> git clone https://github.com/nats-io/java-nats.git
+> git clone https://github.com/SpotOnInc/nats-android.git
 > cd java-nats
 > ./gradlew build
 ```
