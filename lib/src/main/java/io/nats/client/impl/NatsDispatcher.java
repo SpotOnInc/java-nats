@@ -184,11 +184,13 @@ class NatsDispatcher extends NatsConsumer implements Dispatcher, Runnable {
 
         if (sub == null) {
             sub = connection.createSubscription(subject, queueName, this);
-            NatsSubscription actual = subscriptions.get(subject);
-            subscriptions.put(subject, sub);
-//            if (actual != null) {
-//                this.connection.unsubscribe(sub, -1); // Could happen on very bad timing
-//            }
+            NatsSubscription existing = subscriptions.get(subject);
+            if (existing == null) {
+                subscriptions.put(subject, sub);
+            }
+            else {
+                connection.unsubscribe(sub, -1); // Could happen on very bad timing
+            }
         }
 
         return this;
