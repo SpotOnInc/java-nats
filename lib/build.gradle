@@ -2,6 +2,7 @@
 plugins {
     id 'java-library'
     id 'java'
+    id 'kotlin'
     id 'jacoco'
     id 'maven'
     id 'maven-publish'
@@ -18,6 +19,8 @@ def versionPatch = 1
 def versionModifier = ""
 def jarVersion = "2.4.1"
 def branch = System.getenv("TRAVIS_BRANCH");
+
+
 
 def getVersionName = { ->
     if ("true".equals(System.getenv("TRAVIS_PULL_REQUEST")) || !"master".equals(branch))  {
@@ -53,14 +56,18 @@ repositories {
 }
 
 dependencies {
-    compile 'net.i2p.crypto:eddsa:0.3.0'
-    testImplementation 'junit:junit:4.12'
+    api 'net.i2p.crypto:eddsa:0.3.0'
+
+    api deps.kotlin
+    api deps.kotlinCoroutine
+
+    testImplementation deps.junit
 }
 
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java','src/examples/java']
+            srcDirs = ['src/main/java']
         }
     }
     test {

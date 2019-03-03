@@ -6,9 +6,9 @@ A [Android](http://www.android.com) client for the [NATS messaging system](https
 
 [![License Apache 2](https://img.shields.io/badge/License-Apache2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-This is version 2.1 of the Android port to the [java-nats](https://github.com/nats-io/java-nats) library. 
+This is version 2.1 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
 
-It has no external dependencies.  I replaced some JDK classes not available in Android pre API 24 with implementations based
+It has no external dependencies.  I replaced some JDK classes not available in Android API 21 with implementations based
 on available JDK classes. 
 
 ## Kotlin Coroutines

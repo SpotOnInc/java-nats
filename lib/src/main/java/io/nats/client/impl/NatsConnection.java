@@ -1502,9 +1502,9 @@ class NatsConnection implements Connection {
         // Don't include subscribers with dispatchers
         HashSet<NatsSubscription> pureSubscribers = new HashSet<>();
         pureSubscribers.addAll(this.subscribers.values());
-        pureSubscribers.removeIf((s) -> {
-            return s.getDispatcher() != null;
-        });
+        for(Iterator<NatsSubscription> it=pureSubscribers.iterator(); it.hasNext();) {
+            if(it.next().getDispatcher() != null) it.remove();
+        }
 
         final HashSet<NatsConsumer> consumers = new HashSet<>();
         consumers.addAll(pureSubscribers);
