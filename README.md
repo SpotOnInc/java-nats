@@ -11,9 +11,6 @@ This is version 2.1 of the Android API 21 port to the [java-nats](https://github
 It has no external dependencies.  I replaced some JDK classes not available in Android API 21 with implementations based
 on available JDK classes. 
 
-## Kotlin Coroutines
-
-Kotlin and coroutine support will be added shortly
 
 ## A Note on Versions
 

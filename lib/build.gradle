@@ -8,7 +8,6 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'com.github.kt3k.coveralls' version '2.6.3'
-    id 'osgi'
 }
 
 // Update version here, repeated check-ins not into master will have snapshot on them
@@ -58,9 +57,6 @@ repositories {
 dependencies {
     api 'net.i2p.crypto:eddsa:0.3.0'
 
-    api deps.kotlin
-    api deps.kotlinCoroutine
-
     testImplementation deps.junit
 }
 
@@ -77,18 +73,11 @@ sourceSets {
     }
 }
 
-osgiClasses {
-    exclude("io/nats/examples/**")
-}
-
 jar {
     manifest {
         attributes('Implementation-Title': 'Android Nats',
                    'Implementation-Version': jarVersion,
                    'Implementation-Vendor': 'spoton.com')
-        instruction "Import-Package", "!net.i2p.crypto.eddsa.math"
-        instruction "Import-Package", "net.i2p*"
-        instruction "Import-Package", "io.nats*"
     }
     exclude("io/nats/examples/**")
 }
