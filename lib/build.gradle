@@ -97,7 +97,7 @@ javadoc {
     options.overview = 'src/main/javadoc/overview.html' // relative to source root
     source = sourceSets.main.allJava
     title = "NATS.IO Android API"
-    excludes = ['io/nats/client/impl', 'io/nats/examples']
+    excludes = ['io/nats/client/impl']
     classpath = sourceSets.main.runtimeClasspath
     doLast {
             exec {
@@ -142,8 +142,7 @@ jacocoTestReport {
     }
     afterEvaluate { // only report on main library not examples
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: ['**/examples**'])
+            fileTree(dir: it)
         })
     }
 }
