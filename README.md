@@ -5,8 +5,10 @@
 A [Android](http://www.android.com) client for the [NATS messaging system](https://nats.io).
 
 [![License Apache 2](https://img.shields.io/badge/License-Apache2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.spoton/nats-android/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.spoton/nats-android)
+[![Javadoc](http://javadoc.io/badge/com.spoton/nats-android.svg?branch=master)](http://javadoc.io/doc/com.spoton/nats-android?branch=master)
 
-This is version 2.1 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
+This is version 2.4.1 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
 
 It has no external dependencies.  I replaced some JDK classes not available in Android API 21 with implementations based
 on available JDK classes. 
@@ -14,7 +16,7 @@ on available JDK classes.
 
 ## A Note on Versions
 
-This is version 2.1 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
+This is version 2.4.1 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
 
 The API is [simple to use](#listening-for-incoming-messages) and highly [performant](#Benchmarking).
 
@@ -26,19 +28,21 @@ Previous versions are still available in the repo.
 
 The client protocol spec doesn't explicitly state the encoding on subjects. Some clients use ASCII and some use UTF-8 which matches ASCII for a-Z and 0-9. Until 2.1.2 the 2.0+ version of the Java client used ASCII for performance reasons. As of 2.1.2 you can choose to support UTF-8 subjects via the Options. Keep in mind that there is a small performance penalty for UTF-8 encoding and decoding in benchmarks, but depending on your application this cost may be negligible. Also, keep in mind that not all clients support UTF-8 and test accordingly.
 
-### NKey-based Challenge Response Authentication
-
-The NATS server is adding support for a challenge response authentication scheme based on [NKeys](https://github.com/nats-io/nkeys). Version 2.2.0 of
-the Java client supports this scheme via an AuthHandler interface. *Version 2.3.0 replaced several NKey methods that used strings with methods using char[]
-to improve security. Since NKeys are new, and not available in the server we have not bumped the major version and are just bumping the minor version.*
 
 ## Installation
 
 The nats-android client is provided in a single jar file, with a single external dependency for the encryption in NKey support. See [Building From Source](#building-from-source) for details on building the library.
 
+### Downloading the Jar
+
+You can download the latest jar at [https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.1/nats-android-2.4.1.jar](https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.1/nats-android-2.4.1.jar).
+
+
 ### Using Gradle
 
-This Android port is new and not yet published to public repos.  Will do!
+```groovy
+implementation 'com.spoton:nats-android:2.4.1'
+```
 
 ## Basic Usage
 

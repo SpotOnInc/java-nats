@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import io.nats.client.impl.LatchFuture;
+
 /**
  * Handles the begining of the connect sequence, all hard coded, but
  * is configurable to fail at specific points to allow client testing.
