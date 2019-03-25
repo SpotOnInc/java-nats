@@ -199,7 +199,7 @@ abstract class NatsConsumer implements Consumer {
 
         // Wait for the timeout or the pending count to go to 0, skipped if conn is
         // draining
-        Thread t = new Thread(() -> {
+        connection.getExecutor().submit(() -> {
             try {
                 Duration now = Duration.now();
 
@@ -221,8 +221,6 @@ abstract class NatsConsumer implements Consumer {
                 tracker.complete(this.isDrained());
             }
        });
-       t.setName("Consumer Drain");
-       t.start();
 
        return getDrainingFuture();
    }

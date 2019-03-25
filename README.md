@@ -8,7 +8,7 @@ A [Android](http://www.android.com) client for the [NATS messaging system](https
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.spoton/nats-android/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.spoton/nats-android)
 [![Javadoc](http://javadoc.io/badge/com.spoton/nats-android.svg?branch=master)](http://javadoc.io/doc/com.spoton/nats-android?branch=master)
 
-This is version 2.4.1 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
+This is version 2.4.2 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
 
 It has no external dependencies.  I replaced some JDK classes not available in Android API 21 with implementations based
 on available JDK classes. 
@@ -16,7 +16,7 @@ on available JDK classes.
 
 ## A Note on Versions
 
-This is version 2.4.1 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
+This is version 2.4.2 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
 
 The API is [simple to use](#listening-for-incoming-messages) and highly [performant](#Benchmarking).
 
@@ -35,13 +35,13 @@ The nats-android client is provided in a single jar file, with a single external
 
 ### Downloading the Jar
 
-You can download the latest jar at [https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.1/nats-android-2.4.1.jar](https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.1/nats-android-2.4.1.jar).
+You can download the latest jar at [https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.2/nats-android-2.4.2.jar](https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.2/nats-android-2.4.2.jar).
 
 
 ### Using Gradle
 
 ```groovy
-implementation 'com.spoton:nats-android:2.4.1'
+implementation 'com.spoton:nats-android:2.4.2'
 ```
 
 ## Basic Usage

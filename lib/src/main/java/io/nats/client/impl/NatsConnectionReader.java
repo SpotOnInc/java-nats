@@ -57,9 +57,8 @@ class NatsConnectionReader implements Runnable {
     
     private byte[] buffer;
     private int bufferPosition;
-    
-    private Thread thread;
-    private LatchFuture<Boolean> stopped;
+
+    private Future<Boolean> stopped;
     private Future<DataPort> dataPortFuture;
     private final AtomicBoolean running;
 
@@ -86,10 +85,7 @@ class NatsConnectionReader implements Runnable {
     void start(Future<DataPort> dataPortFuture) {
         this.dataPortFuture = dataPortFuture;
         this.running.set(true);
-        this.stopped = new LatchFuture(); // New future
-        String name = (this.connection.getOptions().getConnectionName() != null) ? this.connection.getOptions().getConnectionName() : "Nats Connection";
-        this.thread = new Thread(this, name + " Reader");
-        this.thread.start();
+        this.stopped = connection.getExecutor().submit(this, Boolean.TRUE);
     }
 
     // May be called several times on an error.
@@ -100,6 +96,7 @@ class NatsConnectionReader implements Runnable {
         return stopped;
     }
 
+    @Override
     public void run() {
         try {
             DataPort dataPort = this.dataPortFuture.get(); // Will wait for the future to complete
@@ -149,8 +146,6 @@ class NatsConnectionReader implements Runnable {
             // Clear the buffers, since they are only used inside this try/catch
             // We will reuse later
             this.protocolBuffer.clear();
-            this.stopped.complete(Boolean.TRUE);
-            this.thread = null;
         }
     }
 
@@ -350,7 +345,7 @@ class NatsConnectionReader implements Runnable {
             } else if (chars[0] == '-' && 
                         (chars[1] == 'E' || chars[1] == 'e') &&
                         (chars[2] == 'R' || chars[2] == 'r') && 
-                        (chars[3] == 'R' || chars[3] == 'R')) {
+                        (chars[3] == 'R' || chars[3] == 'r')) {
                 return NatsConnection.OP_ERR;
             } else if ((chars[0] == 'I' || chars[0] == 'i') && 
                         (chars[1] == 'N' || chars[1] == 'n') && 
