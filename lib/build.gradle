@@ -2,7 +2,6 @@
 plugins {
     id 'java-library'
     id 'java'
-    id 'kotlin'
     id 'jacoco'
     id 'maven'
     id 'signing'
@@ -52,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    api 'net.i2p.crypto:eddsa:0.3.0'
+    implementation deps.eddsa
 
     testImplementation deps.junit
 }
@@ -76,7 +75,6 @@ jar {
                    'Implementation-Version': jarVersion,
                    'Implementation-Vendor': 'spoton.com')
     }
-    exclude("io/nats/examples/**")
 }
 
 test {

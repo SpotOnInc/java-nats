@@ -7,6 +7,7 @@ buildscript {
     }
     ext.versions = [
             'junitVersion'           : '4.12',
+            'eddsaVersion'           : '0.3.0',
             'kotlinVersion'          : '1.3.21',
             'kotlinCoroutineVersion' : '1.1.1',
             'timberVersion'          : '4.5.1'
@@ -15,6 +16,7 @@ buildscript {
     ext.deps = [
             // Kotlin
             'junit'                   : "junit:junit:${versions.junitVersion}",
+            'eddsa'                   : "net.i2p.crypto:eddsa:${versions.eddsaVersion}",
             'kotlin'                  : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlinVersion}",
             'kotlinCoroutine'         : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutineVersion}",
             'timber'                  : "com.jakewharton.timber:timber:${versions.timberVersion}"
