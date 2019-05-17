@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -108,6 +109,8 @@ class NatsConnection implements Connection {
     private AtomicReference<NatsDispatcher> inboxDispatcher;
     private Timer timer;
 
+    private AtomicBoolean needPing;
+
     private AtomicLong nextSid;
     private NUID nuid;
 
@@ -118,6 +121,7 @@ class NatsConnection implements Connection {
     private ExecutorService callbackRunner;
 
     private ExecutorService executor;
+    private ExecutorService connectExecutor;
 
     NatsConnection(Options options) {
         this.options = options;
@@ -152,6 +156,9 @@ class NatsConnection implements Connection {
         this.callbackRunner = Executors.newSingleThreadExecutor();
 
         this.executor = options.getExecutor();
+        this.connectExecutor = Executors.newSingleThreadExecutor();
+
+        this.needPing = new AtomicBoolean(true);
     }
 
     // Connect is only called after creation
@@ -182,7 +189,7 @@ class NatsConnection implements Connection {
                 reconnect();
             } else {
                 close();
-                throw new IOException("Unable to connect to gnatsd server.");
+                throw new IOException("Unable to connect to NATS server.");
             }
         }
     }
@@ -307,9 +314,21 @@ class NatsConnection implements Connection {
 
             // Wait for the INFO message manually
             // all other traffic will use the reader and writer
-            readInitialInfo();
-            checkVersionRequirements();
-            upgradeToSecureIfNeeded();
+            Callable<Object> connectTask = new Callable<Object>() {
+                public Object call() throws IOException {
+                    readInitialInfo();
+                    checkVersionRequirements();
+                    upgradeToSecureIfNeeded();
+                    return null;
+                }
+            };
+
+            Future<Object> future = this.connectExecutor.submit(connectTask);
+            try {
+                future.get(this.options.getConnectionTimeout().toNanos(), TimeUnit.NANOSECONDS);
+            } finally {
+                future.cancel(true);
+            }
 
             // start the reader and writer after we secured the connection, if necessary
             this.reader.start(this.dataPortFuture);
@@ -458,6 +477,7 @@ class NatsConnection implements Connection {
         statusLock.lock();
         try {
             updateStatus(Status.DISCONNECTED);
+            this.exceptionDuringConnectChange = null; // Ignore IOExceptions during closeSocketImpl()
             this.disconnecting = false;
             statusChanged.signalAll();
         } finally {
@@ -541,13 +561,16 @@ class NatsConnection implements Connection {
             statusLock.unlock();
         }
 
-        // Stop the error handler code
+        // Stop the error handling and connect executors
         callbackRunner.shutdown();
         try {
             callbackRunner.awaitTermination(this.options.getConnectionTimeout().toNanos(), TimeUnit.NANOSECONDS);
         } finally {
             callbackRunner.shutdownNow();
         }
+
+        // There's no need to wait for running tasks since we're told to close
+        connectExecutor.shutdownNow();
 
         statusLock.lock();
         try {
@@ -1013,6 +1036,13 @@ class NatsConnection implements Connection {
             return retVal;
         }
 
+        if (!treatAsInternal && !this.needPing.get()) {
+            LatchFuture<Boolean> retVal = new LatchFuture<Boolean>();
+            retVal.complete(Boolean.TRUE);
+            this.needPing.set(true);
+            return retVal;
+        }
+
         if (max > 0 && pongQueue.size() + 1 > max) {
             handleCommunicationIssue(new IllegalStateException("Max outgoing Ping count exceeded."));
             return null;
@@ -1028,6 +1058,7 @@ class NatsConnection implements Connection {
             queueOutgoing(msg);
         }
 
+        this.needPing.set(true);
         this.statistics.incrementPingCount();
         return pongFuture;
     }
@@ -1132,6 +1163,7 @@ class NatsConnection implements Connection {
     }
 
     void deliverMessage(NatsMessage msg) {
+        this.needPing.set(false);
         this.statistics.incrementInMsgs();
         this.statistics.incrementInBytes(msg.getSizeInBytes());
 

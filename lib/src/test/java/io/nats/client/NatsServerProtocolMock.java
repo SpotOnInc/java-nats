@@ -31,6 +31,7 @@ public class NatsServerProtocolMock implements Closeable{
 
     // Default is to exit after pong
     public enum ExitAt {
+        SLEEP_BEFORE_INFO,
         EXIT_BEFORE_INFO,
         EXIT_AFTER_INFO,
         EXIT_AFTER_CONNECT,
@@ -166,6 +167,14 @@ public class NatsServerProtocolMock implements Closeable{
 
             if (exitAt == ExitAt.EXIT_BEFORE_INFO) {
                 throw new Exception("exit");
+            }
+
+            if (exitAt == ExitAt.SLEEP_BEFORE_INFO) {
+                try {
+                    Thread.sleep(3000);
+                } catch ( InterruptedException e) {
+                    // ignore
+                }
             }
 
             if (this.customInfo != null) {

@@ -8,7 +8,7 @@ A [Android](http://www.android.com) client for the [NATS messaging system](https
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.spoton/nats-android/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.spoton/nats-android)
 [![Javadoc](http://javadoc.io/badge/com.spoton/nats-android.svg?branch=master)](http://javadoc.io/doc/com.spoton/nats-android?branch=master)
 
-This is version 2.4.2 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
+This is version 2.4.6 of the Android API 21 port to the [java-nats](https://github.com/nats-io/java-nats) library. 
 
 It has no external dependencies.  I replaced some JDK classes not available in Android API 21 with implementations based
 on available JDK classes. 
@@ -16,7 +16,9 @@ on available JDK classes.
 
 ## A Note on Versions
 
-This is version 2.4.2 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
+The NATS server renamed itself from gnatsd to nats-server around 2.4.6. This and other files try to use the new names, but some underlying code may change over several versions. If you are building yourself, please keep an eye out for issues and report them.
+
+This is version 2.4.6 of the Android port to the java-nats library. This version is a ground up rewrite of the original library. Part of the goal of this re-write was to address the excessive use of threads, we created a Dispatcher construct to allow applications to control thread creation more intentionally. This version also removes all non-JDK runtime dependencies.
 
 The API is [simple to use](#listening-for-incoming-messages) and highly [performant](#Benchmarking).
 
@@ -35,18 +37,18 @@ The nats-android client is provided in a single jar file, with a single external
 
 ### Downloading the Jar
 
-You can download the latest jar at [https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.2/nats-android-2.4.2.jar](https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.2/nats-android-2.4.2.jar).
+You can download the latest jar at [https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.2/nats-android-2.4.6.jar](https://search.maven.org/remotecontent?filepath=com/spoton/nats-android/2.4.6/nats-android-2.4.6.jar).
 
 
 ### Using Gradle
 
 ```groovy
-implementation 'com.spoton:nats-android:2.4.2'
+implementation 'com.spoton:nats-android:2.4.6'
 ```
 
 ## Basic Usage
 
-Sending and receiving with NATS is as simple as connecting to the gnatsd and publishing or subscribing for messages. There is an example Android app provided in this repo as described in [examples.md](example/README.md).
+Sending and receiving with NATS is as simple as connecting to the nats-server and publishing or subscribing for messages. There is an example Android app provided in this repo as described in [examples.md](example/README.md).
 
 ### Connecting
 
@@ -160,7 +162,7 @@ You can include a truststore in your application assets as opposed to system tru
 
 ### Clusters & Reconnecting
 
-The Java client will automatically reconnect if it loses its connection the gnatsd. If given a single server, the client will keep trying that one. If given a list of servers, the client will rotate between them. When the gnatsd servers are in a cluster, they will tell the client about the other servers, so that in the simplest case a client could connect to one server, learn about the cluster and reconnect to another server if its initial one goes down.
+The Java client will automatically reconnect if it loses its connection the nats-server. If given a single server, the client will keep trying that one. If given a list of servers, the client will rotate between them. When the nats servers are in a cluster, they will tell the client about the other servers, so that in the simplest case a client could connect to one server, learn about the cluster and reconnect to another server if its initial one goes down.
 
 To tell the connection about multiple servers for the initial connection, use the `servers()` method on the options builder, or call `server()` multiple times.
 
@@ -205,7 +207,7 @@ The java doc is located in `build/docs` and the example jar is in `build/libs`. 
 
 which will create a folder called `build/reports/jacoco` containing the file `index.html` you can open and use to browse the coverage. Keep in mind we have focused on library test coverage, not coverage for the examples.
 
-Many of the tests run gnatsd on a custom port. If gnatsd is in your path they should just work, but in cases where it is not, or an IDE running tests has issues with the path you can specify the gnatsd location with the environment variable `gnatsd_path`.
+Many of the tests run nats-server on a custom port. If nats-server is in your path they should just work, but in cases where it is not, or an IDE running tests has issues with the path you can specify the nats-server location with the environment variable `nats_-_server_path`.
 
 ## License
 

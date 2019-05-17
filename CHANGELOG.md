@@ -1,6 +1,26 @@
 
 # Change Log
 
+## Version 2.4.5 & 2.4.6
+
+* Clean up for rename to nats.java
+
+## Version 2.4.4
+
+* [FIXED] - #230 - removed extra executor allocation
+* [FIXED] - #231 - found a problem with message ordering when filtering pings on reconnect, caused issues with reconnect in general
+* [FIXED] - #226 - added more doc about ping intervals and max ping
+* [FIXED] - #224 - resolved a latency problem with windows due to the cost of the message queues spinwait/lock
+* [CHANGED] - started support for renaming gnatsd to nats-server, full release isn't done so using gnatsd for tests still
+
+## Version 2.4.3
+
+* [FIXED] - #223 - made SID public in the message
+* [FIXED] - #227 - changed default thread to be non-daemon and normal priority, fixes shutdown issues
+* [FIXED] - minor issue in javadoc that showed up when building on windows
+* [ADDED] - test for fast pings and disconnect, duration.zero on nextMsg
+* [CHANGED] - accepted pull request to replace explicit thread creation with executor
+
 ## Version 2.4.2
 
 * [FIXED] - #217 - added check to "ignore" exceptions from reader during drain

@@ -38,6 +38,7 @@ ossrhPassword=<YOUR_JIRA_PASSWORD>
 the last line, if uncommented, will cause the deploy to go to your build folder, so that you can manually check it. Once you have the properties set up, simple type
 
 ```bash
+> export TRAVIS_BRANCH=master
 > ./gradlew uploadArchives
 ```
 
@@ -51,7 +52,7 @@ The global/secure values are used to deploy, they can be regenerated/created by 
 the sonatype repository
 
 You can use --add or copy and paste to the global section manually.
-I had issues with the repo, so you may want to add -r nats-io/java-nats
+I had issues with the repo, so you may want to add -r nats-io/nats.java
 
 ```bash
 > cd java-nats
